@@ -23,7 +23,7 @@ const PaymentScreen = ({ history }) => {
     navigate('/shipping')
   }
 
-  const [paymentMethod, setPaymentMethod] = useState('Paypal')
+  const [paymentMethod, setPaymentMethod] = useState('PayStack')
 
   const dispatch = useDispatch()
 
@@ -44,9 +44,9 @@ const PaymentScreen = ({ history }) => {
             <FormCheck
               type='radio'
               label='PayStack or Credit Card'
-              id='PayPal'
+              id='PayStack'
               name='paymentMethod'
-              value='PayPal'
+              value='PayStack'
               checked
               onChange={(e) => setPaymentMethod(e.target.value)}></FormCheck>
             {/* <FormCheck

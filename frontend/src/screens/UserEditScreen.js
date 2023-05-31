@@ -1,31 +1,59 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
+import {
+  useParams,
+  Link,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../Components/Message'
 import Loader from '../Components/Loader'
 import FormContainer from '../Components/FormContainer'
-import { getUserDetails } from '../actions/userActions'
+import { getUserDetails, updateUser } from '../actions/userActions'
+import { USER_UPDATE_RESET } from '../constants/userConstants'
 
 const UserEditScreen = () => {
-  let { userId } = useParams()
+  const { id } = useParams()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
 
   let location = useLocation()
-  let history = useNavigate()
+  let Navigate = useNavigate()
 
   const dispatch = useDispatch()
 
   const userDetails = useSelector((state) => state.userDetails)
   const { loading, error, user } = userDetails
 
-  useEffect(() => {}, [])
+  const userUpdate = useSelector((state) => state.userUpdate)
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpate,
+  } = userUpdate
+
+  useEffect(() => {
+    if (successUpate) {
+      dispatch({ type: USER_UPDATE_RESET })
+      Navigate('/admin/userlist')
+    } else {
+      if (!user.name || user._id !== id) {
+        dispatch(getUserDetails(id))
+      } else {
+        setName(user.name)
+        setEmail(user.email)
+        setIsAdmin(user.isAdmin)
+      }
+    }
+  }, [dispatch, Navigate, id, user, successUpate])
 
   const submitHandler = (e) => {
     e.preventDefault()
+    dispatch(updateUser({ _id: id, name, email, isAdmin }))
   }
 
   return (
@@ -35,6 +63,8 @@ const UserEditScreen = () => {
       </Link>
       <FormContainer>
         <h1>Edit User</h1>
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -59,24 +89,12 @@ const UserEditScreen = () => {
                 onChange={(e) => setEmail(e.target.value)}></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId='password'>
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type='password'
-                placeholder='Enter password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}></Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId='confirmPassword'>
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type='password'
-                placeholder='Confirm password'
-                value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(e.target.value)
-                }></Form.Control>
+            <Form.Group controlId='isadmin'>
+              <Form.Check
+                type='checkbox'
+                label='Is Admin'
+                checked={isAdmin}
+                onChange={(e) => setIsAdmin(e.target.checked)}></Form.Check>
             </Form.Group>
 
             <Button type='submit' variant='primary' className='py-2 my-3'>
