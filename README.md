@@ -4,6 +4,9 @@ Bootstrap and Material UI were implemented for design to improve user experience
 Tested all the endpoints on postman and made sure the worked properly before deploying the API.
 
 
+
+
+
 ![e-commerce ss (1)](https://github.com/bintus-ux/caleb-proshop-app/assets/122406759/955f4166-07ec-49c6-83ba-f006bd2ded26)
 
 
